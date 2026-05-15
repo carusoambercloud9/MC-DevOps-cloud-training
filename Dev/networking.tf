@@ -59,12 +59,12 @@ resource "aws_lb" "mc-dev_lb" {
 }
 
 # Target Group pointing to the EC2 instance
-resource "aws_lb_target_group" "mc-dev_tg" {
+resource "aws_lb_target_group" "mc-dev-tg" {
   name        = "mc-dev-app-tg"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = aws_vpc.mc-dev.id
-  target_type = "instance"
+  target_type = "ip"
 
   health_check {
     path                = "/"
@@ -77,29 +77,18 @@ resource "aws_lb_target_group" "mc-dev_tg" {
 
   tags = { Name = "mc-dev-app-tg" }
 }
-
-# Register the EC2 instance with the Target Group
-resource "aws_lb_target_group_attachment" "mc-dev_tg_attachment" {
-  target_group_arn = aws_lb_target_group.mc-dev_tg.arn
-  target_id        = aws_instance.mc-dev.id
-  port             = 80
-}
-
 # HTTP Listener to redirect traffic to HTTPS
 resource "aws_lb_listener" "mc-dev_http_listener" {
   load_balancer_arn = aws_lb.mc-dev_lb.arn
   port              = 80
   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
-    redirect {
-      protocol    = "HTTPS"
-      port        = "443"
-      status_code = "HTTP_301"
-    }
+ default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.mc-dev-tg.arn
   }
-}
+  }
+
 
 # HTTPS Listener for secure traffic with ACM certificate
 # Uncomment if you are using HTTPS and have a validated ACM certificate.
