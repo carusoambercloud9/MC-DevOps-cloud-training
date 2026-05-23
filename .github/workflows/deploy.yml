@@ -1,4 +1,4 @@
-
+name: MC Terraform CI/CD Pipeline
 on:
   push:
     branches:
@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3 
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: hashicorp/setup-terraform@v2
       - name: Terraform Init & Apply - Dev
         working-directory: pipeline/dev
@@ -31,6 +33,8 @@ jobs:
     needs: deploy-dev
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: hashicorp/setup-terraform@v2
       - name: Terraform Init & Apply - UAT
         working-directory: pipeline/uat
@@ -49,6 +53,8 @@ jobs:
     needs: deploy-uat
     steps:
       - uses: actions/checkout@v3
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
       - uses: hashicorp/setup-terraform@v2
       - name: Terraform Init & Apply - Prod
         working-directory: pipeline/prod
