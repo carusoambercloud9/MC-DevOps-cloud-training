@@ -1,21 +1,23 @@
-name: Terraform CI/CD Pipeline
+name: MC Terraform CI/CD Pipeline
 
 on:
   push:
     branches:
       - develop
-    paths:
-      - 'pipeline/**'
+      - feature/**
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   deploy-dev:
-    name: Deploy to Dev
+    name: MC Deploy to Dev
     runs-on: ubuntu-latest
-    environment: dev
+    environment: mc-dev
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v2
-      - name: Terraform Init & Apply - Dev
+      - name: MC Terraform Init & Apply - Dev
         working-directory: pipeline/dev
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -26,14 +28,14 @@ jobs:
           terraform apply -auto-approve
 
   deploy-uat:
-    name: Deploy to UAT
+    name: MC Deploy to UAT
     runs-on: ubuntu-latest
-    environment: uat-approval
+    environment: mc-uat-approval
     needs: deploy-dev
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v2
-      - name: Terraform Init & Apply - UAT
+      - name: MC Terraform Init & Apply - UAT
         working-directory: pipeline/uat
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -44,14 +46,14 @@ jobs:
           terraform apply -auto-approve
 
   deploy-prod:
-    name: Deploy to Prod
+    name: MC Deploy to Prod
     runs-on: ubuntu-latest
-    environment: prod-approval
+    environment: mc-prod-approval
     needs: deploy-uat
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v2
-      - name: Terraform Init & Apply - Prod
+      - name: MC Terraform Init & Apply - Prod
         working-directory: pipeline/prod
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
