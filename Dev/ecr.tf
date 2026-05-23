@@ -12,6 +12,10 @@ resource "aws_ecr_repository" "mc_app" {
     Environment = "Dev"
     Project     = "MaidCentral"
   }
+
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 # Output the repository URL
