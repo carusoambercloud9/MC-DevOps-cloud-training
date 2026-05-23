@@ -18,4 +18,8 @@ resource "aws_s3_bucket" "mc_dev_bucket" {
     Environment = "dev"
     Project     = "MaidCentral"
   }
+
+lifecycle {
+    ignore_changes = all
+  }
 }
