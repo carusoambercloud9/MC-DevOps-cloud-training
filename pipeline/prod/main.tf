@@ -18,4 +18,8 @@ resource "aws_s3_bucket" "mc_prod_bucket" {
     Environment = "prod"
     Project     = "MaidCentral"
   }
+
+  lifecycle {
+    ignore_changes = all
+  }
 }

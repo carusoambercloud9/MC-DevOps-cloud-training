@@ -18,4 +18,8 @@ resource "aws_s3_bucket" "mc_uat_bucket" {
     Environment = "uat"
     Project     = "MaidCentral"
   }
+
+  lifecycle {
+    ignore_changes = all
+  }
 }
